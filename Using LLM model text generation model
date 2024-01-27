@@ -1,0 +1,253 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyNQxg/0ruXkuU4I5Jnavoi8",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/ruh2110/-Image-analysis-of-intracranial-hemorrhage-using-CNN/blob/main/Using%20LLM%20model%20text%20generation%20model\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 1,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "YE39uFVtZotD",
+        "outputId": "9e974087-7aeb-4c81-d7ce-5689215162f7"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Collecting llm\n",
+            "  Downloading llm-0.13.1-py3-none-any.whl (38 kB)\n",
+            "Requirement already satisfied: click in /usr/local/lib/python3.10/dist-packages (from llm) (8.1.7)\n",
+            "Collecting openai>=1.0 (from llm)\n",
+            "  Downloading openai-1.10.0-py3-none-any.whl (225 kB)\n",
+            "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m225.1/225.1 kB\u001b[0m \u001b[31m10.2 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hCollecting click-default-group>=1.2.3 (from llm)\n",
+            "  Downloading click_default_group-1.2.4-py2.py3-none-any.whl (4.1 kB)\n",
+            "Collecting sqlite-utils>=3.35.0 (from llm)\n",
+            "  Downloading sqlite_utils-3.36-py3-none-any.whl (67 kB)\n",
+            "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m67.7/67.7 kB\u001b[0m \u001b[31m6.5 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hCollecting sqlite-migrate>=0.1a2 (from llm)\n",
+            "  Downloading sqlite_migrate-0.1b0-py3-none-any.whl (10.0 kB)\n",
+            "Requirement already satisfied: pydantic>=1.10.2 in /usr/local/lib/python3.10/dist-packages (from llm) (1.10.14)\n",
+            "Requirement already satisfied: PyYAML in /usr/local/lib/python3.10/dist-packages (from llm) (6.0.1)\n",
+            "Requirement already satisfied: pluggy in /usr/local/lib/python3.10/dist-packages (from llm) (1.3.0)\n",
+            "Collecting python-ulid (from llm)\n",
+            "  Downloading python_ulid-2.2.0-py3-none-any.whl (9.4 kB)\n",
+            "Requirement already satisfied: setuptools in /usr/local/lib/python3.10/dist-packages (from llm) (67.7.2)\n",
+            "Requirement already satisfied: pip in /usr/local/lib/python3.10/dist-packages (from llm) (23.1.2)\n",
+            "Requirement already satisfied: anyio<5,>=3.5.0 in /usr/local/lib/python3.10/dist-packages (from openai>=1.0->llm) (3.7.1)\n",
+            "Requirement already satisfied: distro<2,>=1.7.0 in /usr/lib/python3/dist-packages (from openai>=1.0->llm) (1.7.0)\n",
+            "Collecting httpx<1,>=0.23.0 (from openai>=1.0->llm)\n",
+            "  Downloading httpx-0.26.0-py3-none-any.whl (75 kB)\n",
+            "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m75.9/75.9 kB\u001b[0m \u001b[31m8.7 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hRequirement already satisfied: sniffio in /usr/local/lib/python3.10/dist-packages (from openai>=1.0->llm) (1.3.0)\n",
+            "Requirement already satisfied: tqdm>4 in /usr/local/lib/python3.10/dist-packages (from openai>=1.0->llm) (4.66.1)\n",
+            "Collecting typing-extensions<5,>=4.7 (from openai>=1.0->llm)\n",
+            "  Downloading typing_extensions-4.9.0-py3-none-any.whl (32 kB)\n",
+            "Collecting sqlite-fts4 (from sqlite-utils>=3.35.0->llm)\n",
+            "  Downloading sqlite_fts4-1.0.3-py3-none-any.whl (10.0 kB)\n",
+            "Requirement already satisfied: tabulate in /usr/local/lib/python3.10/dist-packages (from sqlite-utils>=3.35.0->llm) (0.9.0)\n",
+            "Requirement already satisfied: python-dateutil in /usr/local/lib/python3.10/dist-packages (from sqlite-utils>=3.35.0->llm) (2.8.2)\n",
+            "Requirement already satisfied: idna>=2.8 in /usr/local/lib/python3.10/dist-packages (from anyio<5,>=3.5.0->openai>=1.0->llm) (3.6)\n",
+            "Requirement already satisfied: exceptiongroup in /usr/local/lib/python3.10/dist-packages (from anyio<5,>=3.5.0->openai>=1.0->llm) (1.2.0)\n",
+            "Requirement already satisfied: certifi in /usr/local/lib/python3.10/dist-packages (from httpx<1,>=0.23.0->openai>=1.0->llm) (2023.11.17)\n",
+            "Collecting httpcore==1.* (from httpx<1,>=0.23.0->openai>=1.0->llm)\n",
+            "  Downloading httpcore-1.0.2-py3-none-any.whl (76 kB)\n",
+            "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m76.9/76.9 kB\u001b[0m \u001b[31m6.0 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hCollecting h11<0.15,>=0.13 (from httpcore==1.*->httpx<1,>=0.23.0->openai>=1.0->llm)\n",
+            "  Downloading h11-0.14.0-py3-none-any.whl (58 kB)\n",
+            "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m58.3/58.3 kB\u001b[0m \u001b[31m6.9 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hRequirement already satisfied: six>=1.5 in /usr/local/lib/python3.10/dist-packages (from python-dateutil->sqlite-utils>=3.35.0->llm) (1.16.0)\n",
+            "Installing collected packages: sqlite-fts4, typing-extensions, python-ulid, h11, click-default-group, sqlite-utils, httpcore, sqlite-migrate, httpx, openai, llm\n",
+            "  Attempting uninstall: typing-extensions\n",
+            "    Found existing installation: typing_extensions 4.5.0\n",
+            "    Uninstalling typing_extensions-4.5.0:\n",
+            "      Successfully uninstalled typing_extensions-4.5.0\n",
+            "\u001b[31mERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.\n",
+            "llmx 0.0.15a0 requires cohere, which is not installed.\n",
+            "llmx 0.0.15a0 requires tiktoken, which is not installed.\n",
+            "tensorflow-probability 0.22.0 requires typing-extensions<4.6.0, but you have typing-extensions 4.9.0 which is incompatible.\u001b[0m\u001b[31m\n",
+            "\u001b[0mSuccessfully installed click-default-group-1.2.4 h11-0.14.0 httpcore-1.0.2 httpx-0.26.0 llm-0.13.1 openai-1.10.0 python-ulid-2.2.0 sqlite-fts4-1.0.3 sqlite-migrate-0.1b0 sqlite-utils-3.36 typing-extensions-4.9.0\n"
+          ]
+        }
+      ],
+      "source": [
+        "pip install llm\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "pip show llm"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "EodllugtaADq",
+        "outputId": "703ba649-cd65-4915-8b94-f6bfe420e97d"
+      },
+      "execution_count": 3,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Name: llm\n",
+            "Version: 0.13.1\n",
+            "Summary: A CLI utility and Python library for interacting with Large Language Models, including OpenAI, PaLM and local models installed on your own machine.\n",
+            "Home-page: https://github.com/simonw/llm\n",
+            "Author: Simon Willison\n",
+            "Author-email: \n",
+            "License: Apache License, Version 2.0\n",
+            "Location: /usr/local/lib/python3.10/dist-packages\n",
+            "Requires: click, click-default-group, openai, pip, pluggy, pydantic, python-ulid, PyYAML, setuptools, sqlite-migrate, sqlite-utils\n",
+            "Required-by: \n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "pip install --upgrade llm"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "w1nXgzDoaBLB",
+        "outputId": "22434d1c-365c-44aa-faaf-b362e26b8c2b"
+      },
+      "execution_count": 4,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Requirement already satisfied: llm in /usr/local/lib/python3.10/dist-packages (0.13.1)\n",
+            "Requirement already satisfied: click in /usr/local/lib/python3.10/dist-packages (from llm) (8.1.7)\n",
+            "Requirement already satisfied: openai>=1.0 in /usr/local/lib/python3.10/dist-packages (from llm) (1.10.0)\n",
+            "Requirement already satisfied: click-default-group>=1.2.3 in /usr/local/lib/python3.10/dist-packages (from llm) (1.2.4)\n",
+            "Requirement already satisfied: sqlite-utils>=3.35.0 in /usr/local/lib/python3.10/dist-packages (from llm) (3.36)\n",
+            "Requirement already satisfied: sqlite-migrate>=0.1a2 in /usr/local/lib/python3.10/dist-packages (from llm) (0.1b0)\n",
+            "Requirement already satisfied: pydantic>=1.10.2 in /usr/local/lib/python3.10/dist-packages (from llm) (1.10.14)\n",
+            "Requirement already satisfied: PyYAML in /usr/local/lib/python3.10/dist-packages (from llm) (6.0.1)\n",
+            "Requirement already satisfied: pluggy in /usr/local/lib/python3.10/dist-packages (from llm) (1.3.0)\n",
+            "Requirement already satisfied: python-ulid in /usr/local/lib/python3.10/dist-packages (from llm) (2.2.0)\n",
+            "Requirement already satisfied: setuptools in /usr/local/lib/python3.10/dist-packages (from llm) (67.7.2)\n",
+            "Requirement already satisfied: pip in /usr/local/lib/python3.10/dist-packages (from llm) (23.1.2)\n",
+            "Requirement already satisfied: anyio<5,>=3.5.0 in /usr/local/lib/python3.10/dist-packages (from openai>=1.0->llm) (3.7.1)\n",
+            "Requirement already satisfied: distro<2,>=1.7.0 in /usr/lib/python3/dist-packages (from openai>=1.0->llm) (1.7.0)\n",
+            "Requirement already satisfied: httpx<1,>=0.23.0 in /usr/local/lib/python3.10/dist-packages (from openai>=1.0->llm) (0.26.0)\n",
+            "Requirement already satisfied: sniffio in /usr/local/lib/python3.10/dist-packages (from openai>=1.0->llm) (1.3.0)\n",
+            "Requirement already satisfied: tqdm>4 in /usr/local/lib/python3.10/dist-packages (from openai>=1.0->llm) (4.66.1)\n",
+            "Requirement already satisfied: typing-extensions<5,>=4.7 in /usr/local/lib/python3.10/dist-packages (from openai>=1.0->llm) (4.9.0)\n",
+            "Requirement already satisfied: sqlite-fts4 in /usr/local/lib/python3.10/dist-packages (from sqlite-utils>=3.35.0->llm) (1.0.3)\n",
+            "Requirement already satisfied: tabulate in /usr/local/lib/python3.10/dist-packages (from sqlite-utils>=3.35.0->llm) (0.9.0)\n",
+            "Requirement already satisfied: python-dateutil in /usr/local/lib/python3.10/dist-packages (from sqlite-utils>=3.35.0->llm) (2.8.2)\n",
+            "Requirement already satisfied: idna>=2.8 in /usr/local/lib/python3.10/dist-packages (from anyio<5,>=3.5.0->openai>=1.0->llm) (3.6)\n",
+            "Requirement already satisfied: exceptiongroup in /usr/local/lib/python3.10/dist-packages (from anyio<5,>=3.5.0->openai>=1.0->llm) (1.2.0)\n",
+            "Requirement already satisfied: certifi in /usr/local/lib/python3.10/dist-packages (from httpx<1,>=0.23.0->openai>=1.0->llm) (2023.11.17)\n",
+            "Requirement already satisfied: httpcore==1.* in /usr/local/lib/python3.10/dist-packages (from httpx<1,>=0.23.0->openai>=1.0->llm) (1.0.2)\n",
+            "Requirement already satisfied: h11<0.15,>=0.13 in /usr/local/lib/python3.10/dist-packages (from httpcore==1.*->httpx<1,>=0.23.0->openai>=1.0->llm) (0.14.0)\n",
+            "Requirement already satisfied: six>=1.5 in /usr/local/lib/python3.10/dist-packages (from python-dateutil->sqlite-utils>=3.35.0->llm) (1.16.0)\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from transformers import AutoTokenizer, AutoModelForCausalLM\n",
+        "\n",
+        "# Load the pre-trained model and tokenizer\n",
+        "tokenizer = AutoTokenizer.from_pretrained(\"gpt2\")\n",
+        "model = AutoModelForCausalLM.from_pretrained(\"gpt2\")\n",
+        "\n",
+        "# Define the input text\n",
+        "input_text =input(\"Enter the Text: \")\n",
+        "\n",
+        "# Encode the input text\n",
+        "inputs = tokenizer(input_text, return_tensors=\"pt\")\n",
+        "\n",
+        "# Generate the output text\n",
+        "outputs = model.generate(**inputs, max_length=200)\n",
+        "\n",
+        "# Decode the output text\n",
+        "output_text = tokenizer.decode(outputs[0])\n",
+        "\n",
+        "# Print the output text\n",
+        "print(output_text)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "tPoQR_cbcV86",
+        "outputId": "4cf89170-3a38-497e-c206-14a66b6dc0be"
+      },
+      "execution_count": 9,
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": [
+            "Enter the Text: can you give me an example from history where the  enemy was crushed totally from the book ?\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "Setting `pad_token_id` to `eos_token_id`:50256 for open-end generation.\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "can you give me an example from history where the  enemy was crushed totally from the book?\n",
+            "\n",
+            "I think that the book is a very important book. It is a very important book. It is a very important book. It is a very important book. It is a very important book. It is a very important book. It is a very important book. It is a very important book. It is a very important book. It is a very important book. It is a very important book. It is a very important book. It is a very important book. It is a very important book. It is a very important book. It is a very important book. It is a very important book. It is a very important book. It is a very important book. It is a very important book. It is a very important book. It is a very important book. It is a very important book. It is a very important book. It is a very important book.\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [],
+      "metadata": {
+        "id": "U9x4u50Be7rR"
+      },
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}
